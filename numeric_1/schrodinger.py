@@ -2,7 +2,6 @@
 This module is an implementation for solving the time-independent Schrödinger equation.
 """
 
-from typing import Callable
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.constants
@@ -80,7 +79,7 @@ def plot(
         xlim=(np.min(x), np.max(x)),
         title='Wave function'
     )
-    ax[0,0].legend(loc='lower center', ncol=3)
+    ax[0,0].legend(ncol=3)
     ax[0,0].grid(True)
 
     # Upper right plot

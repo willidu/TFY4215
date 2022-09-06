@@ -9,7 +9,7 @@ from scipy.constants import physical_constants
 
 from schrodinger import schrodinger, plot
 
-def V(x, L=1.):
+def V(x):
     """
     Potential inside the box
     """
@@ -30,7 +30,7 @@ def E(n, L):
 def main():
     N = 100
     box_length = 4e-9 / physical_constants['Bohr radius'][0]  # 4 nm as bohr radii
-    x = np.linspace(0, box_length, N+1)
+    x = np.linspace(0, box_length, N+1)  # Burde gå [0, 1] heller
 
     psi_analytical = np.asarray([Psi(x, n, L=box_length) for n in range(1, 4)])
     analytical_e_levels = E(np.arange(1, 5), L=box_length)
