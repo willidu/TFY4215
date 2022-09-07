@@ -56,18 +56,24 @@ def plot(
         x: np.ndarray,
         potential: np.ndarray,
         psi_analytical: None | list[float] = None,
-        energy_lvls_analytical: None | list[float] = None
+        energy_lvls_analytical: None | list[float] = None,
+        title: None | str = None
     ) -> None:
     """
     TODO
     """
     fig, ax = plt.subplots(2, 2, figsize=(12, 8))
-    fig.suptitle('Particle in a box - 1D', fontsize=30, fontweight='semibold')
+    fig.suptitle(title, fontsize=30, fontweight='semibold')
     fig.subplots_adjust(hspace=.4, wspace=0.3)
 
     # Upper left plot
     for i in range(3):
         ax[0,0].plot(x, psi[i], label=f'n = {i+1}', color=COLORS[i])
+
+    # Plots potential on same graph as wave functions
+    ax2 = ax[0,0].twinx()
+    ax2.plot(x, potential, label='V(x)', color='grey')
+    ax2.legend(loc='upper left')
 
     if psi_analytical is not None:
         for n, psi_n in enumerate(psi_analytical):
@@ -79,7 +85,7 @@ def plot(
         xlim=(np.min(x), np.max(x)),
         title='Wave function'
     )
-    ax[0,0].legend(ncol=3)
+    ax[0,0].legend(ncol=3, loc='lower left')
     ax[0,0].grid(True)
 
     # Upper right plot

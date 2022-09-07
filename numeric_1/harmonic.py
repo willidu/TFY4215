@@ -9,30 +9,26 @@ Uses Hartree atomic units:
 """
 
 import numpy as np
-from numpy.polynomial.hermite import hermval
 import matplotlib.pyplot as plt
 from scipy.constants import physical_constants
+from scipy.special import eval_hermite
 
 from schrodinger import schrodinger, plot
 
-def hermite(x: float, n: int) -> float:
-    herm_coeffs = np.zeros(n+1)
-    herm_coeffs[n] = 1
-    return hermval(x, herm_coeffs)
-
 def V(x: float | np.ndarray) -> float | np.ndarray:
     """
-    Potential inside the box
+    Potential of oscillator
     """
     return x ** 2 / 2.
-
 
 def Psi(x: float | np.ndarray, n: int) -> float | np.ndarray:
     """
     Wave function - analytical solution
     TODO - Denne er feil:)
     """
-    return hermite(x, n) * np.exp(- x ** 2 / 2.) / (np.pi ** 0.25 * np.sqrt(np.math.factorial(n) * 2. ** n))
+    H_n = eval_hermite(n, x)
+    scale_param = np.sqrt(2. ** n * np.math.factorial(n) * np.sqrt(np.pi))
+    return H_n * np.exp(-0.5 * x ** 2) / scale_param
 
 def E(n: int) -> float:
     """
@@ -49,9 +45,15 @@ def main():
     analytical_e_levels = [E(n) for n in range(0, 4)]
 
     energy, psi = schrodinger(V(x/dx), dx, hartree_atomic_units=True)
+
+    # Short test to check scaling of wave func. / prob. since it does not
+    # match the analytical solution
+    assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
+
     plot(
         energy, psi, x, V(x), 
-        psi_analytical=None, energy_lvls_analytical=analytical_e_levels
+        psi_analytical=None, energy_lvls_analytical=analytical_e_levels,
+        title='Harmonic oscillator - 1D'
     )
 
 if __name__ == '__main__':
