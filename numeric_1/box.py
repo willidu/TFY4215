@@ -1,6 +1,10 @@
 """
 This module is a solution to the traditional 'Particle in a box' problem.
-Uses Hartree atomic units.
+Uses Hartree atomic units:
+    Electron mass = 1;
+    Elementary charge = 1;
+    Reduced Plack's constant = 1;
+    Length in terms of Bohr radii.
 """
 
 import numpy as np
@@ -35,7 +39,7 @@ def main():
     psi_analytical = np.asarray([Psi(x, n, L=box_length) for n in range(1, 4)])
     analytical_e_levels = E(np.arange(1, 5), L=box_length)
 
-    energy, psi = schrodinger(V(x), box_length/(N+1), True)
+    energy, psi = schrodinger(V(x), box_length/(N+1))
     plot(energy, psi, x/box_length, V(x), psi_analytical, analytical_e_levels)
 
 if __name__ == '__main__':

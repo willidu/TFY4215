@@ -1,17 +1,16 @@
 """
 This module is a solution to the 'Multiple finite wells potential' problem.
 Uses Hartree atomic units:
-    mass = 1;
-    elementary charge = 1;
-    reduced placks constant = 1;
-    length in terms of bohr radii.
+    Electron mass = 1;
+    Elementary charge = 1;
+    Reduced Plack's constant = 1;
+    Length in terms of Bohr radii.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.constants import physical_constants
 
-from schrodinger import schrodinger, plot
+from schrodinger import BOHR_RADII, schrodinger, plot
 
 def V(x: float | np.ndarray, v0: float = -100., cutoff: float = 5.) -> float | np.ndarray:
     """
@@ -24,11 +23,11 @@ def V(x: float | np.ndarray, v0: float = -100., cutoff: float = 5.) -> float | n
 
 def main():
     N = 1000
-    dx = .1e-12 / physical_constants['Bohr radius'][0]  # .1 picometer as bohr radii
+    dx = .1e-12 / BOHR_RADII  # .1 picometer as bohr radii
     x = np.linspace(-1, 1, N+1)
     box_scale_factor = 10  # Yields [-10, 10] * dx -> box 2 picometers wide
 
-    energy, psi = schrodinger(V(x * box_scale_factor), dx, hartree_atomic_units=True)
+    energy, psi = schrodinger(V(x * box_scale_factor), dx)
     assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
 
     plot(

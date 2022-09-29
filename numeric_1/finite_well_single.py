@@ -1,17 +1,16 @@
 """
 This module is a solution to the 'Signle finite well potential' problem.
 Uses Hartree atomic units:
-    mass = 1;
-    elementary charge = 1;
-    reduced placks constant = 1;
-    length in terms of bohr radii.
+    Electron mass = 1;
+    Elementary charge = 1;
+    Reduced Plack's constant = 1;
+    Length in terms of Bohr radii.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.constants import physical_constants
 
-from schrodinger import schrodinger, plot
+from schrodinger import BOHR_RADII, schrodinger, plot
 
 def V(x: float | np.ndarray, v0: float = -10.) -> float | np.ndarray:
     """
@@ -22,14 +21,14 @@ def V(x: float | np.ndarray, v0: float = -10.) -> float | np.ndarray:
 
 def main():
     N = 200
-    dx = 1e-12 / physical_constants['Bohr radius'][0]  # 1 picometer as bohr radii
+    dx = 1e-12 / BOHR_RADII  # 1 picometer as bohr radii
     x = np.linspace(-1, 1, N+1)
 
-    energy, psi = schrodinger(V(x), dx, hartree_atomic_units=True)
+    energy, psi = schrodinger(V(x), dx)
     assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
 
     plot(
-        energy, psi, x, V(x), 
+        energy, psi, x, V(x),
         title='Single finite well potential - 1D'
     )
 

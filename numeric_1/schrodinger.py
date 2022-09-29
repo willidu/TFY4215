@@ -7,47 +7,35 @@ import matplotlib.pyplot as plt
 import scipy.constants
 from scipy.linalg import eigh_tridiagonal
 
+BOHR_RADII = scipy.constants.physical_constants['Bohr radius'][0]
 COLORS = ['g', 'b', 'r', 'c']
 
 def schrodinger(
         potential: np.ndarray,
-        dx: float,
-        hartree_atomic_units: bool = True
+        dx: float
     ) -> tuple[np.ndarray]:
     """
     Solves the time independent Schrödinger equation with potential V(x).
-    Returns energy in eV regardless of atomic or SI units.
-    Assumes constant distance between points.
+    Returns energy in eV. Assumes constant distance between points.
 
     Parameters
     ----------
     potential : np.ndarray
         V(x) evaluated at positions.
     dx : float
-        Distance between points either in meters or bohr radii.
-    hartree_atomic_units : bool, optional
-        Switches from SI units to Hartree atomic units. Default True.
+        Distance between in terms of Bohr radii.
 
     Returns
     -------
     E : np.ndarray
         Energy levels in eV (eigenvalues)
     Psi : np.ndarray
-        Wave functions (eigenfunctions)
+        Normalized wave functions (eigenfunctions)
     """
-    if hartree_atomic_units:
-        hbar = 1.
-        mass = 1.
-        e_scale = scipy.constants.physical_constants['electron volt-hartree relationship'][0]
-    else:
-        hbar = scipy.constants.hbar
-        mass = scipy.constants.electron_mass
-        e_scale = scipy.constants.elementary_charge
-
-    diag = hbar ** 2 / (mass * dx ** 2) + potential
-    semidiag = - hbar ** 2 / (2. * mass * dx ** 2) * np.ones(len(potential) - 1)
+    diag = 1. / (dx ** 2) + potential
+    semidiag = - 1. / (2. * dx ** 2) * np.ones(len(potential) - 1)
     eigvals, eigvecs_norm = eigh_tridiagonal(diag, semidiag)
-    return eigvals / e_scale, eigvecs_norm.T
+    return eigvals / scipy.constants.physical_constants['electron volt-hartree relationship'][0], eigvecs_norm.T
 
 
 def plot(

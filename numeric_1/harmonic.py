@@ -1,11 +1,10 @@
 """
 This module is a solution to the 'Harmonic oscillator' problem.
 Uses Hartree atomic units:
-    omega = 1;
-    mass = 1;
-    elementary charge = 1;
-    reduced placks constant = 1;
-    length in terms of bohr radii.
+    Electron mass = 1;
+    Elementary charge = 1;
+    Reduced Plack's constant = 1;
+    Length in terms of Bohr radii.
 """
 
 import numpy as np
@@ -13,7 +12,7 @@ import matplotlib.pyplot as plt
 from scipy.constants import physical_constants
 from scipy.special import eval_hermite
 
-from schrodinger import schrodinger, plot
+from schrodinger import BOHR_RADII, schrodinger, plot
 
 def V(x: float | np.ndarray) -> float | np.ndarray:
     """
@@ -38,20 +37,19 @@ def E(n: int) -> float:
 
 def main():
     N = 200
-    dx = 1e-10 / physical_constants['Bohr radius'][0]  # 1 Å as bohr radii
+    dx = 1e-10 / BOHR_RADII  # 1 Å as bohr radii
     x = np.linspace(-1/2, 1/2, N+1)
 
     psi_analytical = [Psi(x, n) for n in range(0, 3)]
     analytical_e_levels = [E(n) for n in range(0, 4)]
 
-    energy, psi = schrodinger(V(x/dx), dx, hartree_atomic_units=True)
+    energy, psi = schrodinger(V(x/dx), dx)
 
-    # Short test to check scaling of wave func. / prob. since it does not
-    # match the analytical solution
+    # Check scaling of wave func. and prob. since it does not match the analytical solution
     assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
 
     plot(
-        energy, psi, x, V(x), 
+        energy, psi, x, V(x),
         psi_analytical=None, energy_lvls_analytical=analytical_e_levels,
         title='Harmonic oscillator - 1D'
     )
