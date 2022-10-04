@@ -25,7 +25,6 @@ def main():
     x = np.linspace(-1, 1, N+1)
 
     energy, psi = schrodinger(V(x), dx)
-    assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
 
     plot(
         energy, psi, x, V(x),

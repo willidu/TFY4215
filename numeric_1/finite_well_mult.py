@@ -28,7 +28,6 @@ def main():
     box_scale_factor = 10  # Yields [-10, 10] * dx -> box 2 picometers wide
 
     energy, psi = schrodinger(V(x * box_scale_factor), dx)
-    assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
 
     plot(
         energy, psi, x, V(x * box_scale_factor), 

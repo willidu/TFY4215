@@ -35,6 +35,8 @@ def schrodinger(
     diag = 1. / (dx ** 2) + potential
     semidiag = - 1. / (2. * dx ** 2) * np.ones(len(potential) - 1)
     eigvals, eigvecs_norm = eigh_tridiagonal(diag, semidiag)
+    eigvecs_norm /= np.sqrt(dx)
+    assert np.allclose(np.linalg.norm(eigvecs_norm.T, axis=0)*np.sqrt(dx), np.ones(len(eigvecs_norm.T))), 'Psi not normalized'
     return eigvals / scipy.constants.physical_constants['electron volt-hartree relationship'][0], eigvecs_norm.T
 
 
@@ -58,11 +60,6 @@ def plot(
     for i in range(3):
         ax[0,0].plot(x, psi[i], label=f'n = {i+1}', color=COLORS[i])
 
-    # Plots potential on same graph as wave functions
-    ax2 = ax[0,0].twinx()
-    ax2.plot(x, potential, label='V(x)', color='grey')
-    ax2.legend(loc='upper left')
-
     if psi_analytical is not None:
         for n, psi_n in enumerate(psi_analytical):
             ax[0,0].plot(x, psi_n, label=f'$\psi_{n+1}$', color=COLORS[n], ls='--')
@@ -71,7 +68,7 @@ def plot(
         ylabel=r'$\Psi$',
         xlabel='Distance x/L',
         xlim=(np.min(x), np.max(x)),
-        title='Wave function'
+        title='Wave function of bound state'
     )
     ax[0,0].legend(ncol=3, loc='lower left')
     ax[0,0].grid(True)
@@ -102,7 +99,6 @@ def plot(
         xlabel='Distance x/L',
         ylabel='Energy [eV]',
         xlim=(np.min(x), np.max(x)),
-        ylim=(0, 1.55*energy[i]),  # Makes room for legend at the top
         title='Energy levels'
     )
     ax[1,0].legend(loc='upper left', ncol=4)
@@ -111,9 +107,9 @@ def plot(
     # Lower right plot
     ax[1,1].plot(x, potential, color='g')
     ax[1,1].set(
-        xlabel='Distance x/L',
+        xlabel='Distance x',
         ylabel='V(x)',
         xlim=(np.min(x), np.max(x)),
-        title='Potential energy'
+        title='Potential V(x)'
     )
     ax[1,1].grid(True)
