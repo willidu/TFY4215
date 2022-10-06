@@ -19,8 +19,14 @@ def main():
     ]
 
     for psi in [schrodinger(v, dx)[1] for v in potentials]:
-        assert np.allclose(np.linalg.inv(psi), np.transpose(psi), rtol=1e-5)            # Orthogonality
-        assert np.allclose(np.einsum('ij,ij->i', psi,psi), np.ones_like(x), rtol=1e-5)  # Norm
+        assert np.allclose(
+            np.transpose(psi) @ psi,
+            np.identity(psi.shape[0])/dx
+        ), 'Psi not orthogonal'
+        assert np.allclose(
+            np.einsum('ij,ij->i', psi,psi)*dx,
+            np.ones_like(x)
+        ), 'Psi not normalized'
 
 if __name__ == '__main__':
     main()
