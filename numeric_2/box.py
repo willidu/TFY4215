@@ -1,5 +1,6 @@
 """
 part 1
+TODO
 """
 import sys
 import numpy as np
@@ -18,21 +19,20 @@ def main():
     time_period = 2 * np.pi / (energy[1] - energy[0])
     print(f'T = {time_period:.2f}')
 
+    def psi0(psi):
+        return (psi[0] + psi[1]) / np.sqrt(2)
+
     animate_wave(
         x = x,
-        v = potential,
         time = time_period,
-        psi = lambda x, t: (time_evolution(energy, psi, psi0=psi[0])(x, t) \
-            + time_evolution(energy, psi, psi0=psi[1])(x, t)) / np.sqrt(2),
+        psi = time_evolution(energy, psi, psi0(psi)),
         savepath='animations/box_superpos.gif'
     )
 
     animate_wave(
         x = x,
-        v = potential,
         time = 3*time_period,
-        psi = lambda x, t: (time_evolution(energy, psi, psi0=psi[0])(x, t) \
-            + time_evolution(energy, psi, psi0=psi[1])(x, t)) / np.sqrt(2),
+        psi = time_evolution(energy, psi, psi0(psi)),
         re = True,
         im = True,
         savepath='animations/box_superpos_2.gif'
