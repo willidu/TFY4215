@@ -31,9 +31,9 @@ def time_evolution(
 
 def animate_wave(
         x: np.ndarray,
-        v: np.ndarray,
         time: float,
         psi: Callable[[np.ndarray, float], np.ndarray],  # x, t -> psi
+        v: np.ndarray | None = None,
         fps: int = 25,
         re: bool = False,
         im: bool = False,
@@ -44,12 +44,12 @@ def animate_wave(
     ----------
     x : np.ndarray
         Positional array
-    v : np.ndarray
-        Potential in position x
     time : float
         Duration of animation in seconds
     psi : Callable[[np.ndarray, float], np.ndarray]
         Time evolved Psi(x, t)
+    v : np.ndarray or None
+        Potential in position x
     fps : int
         Frames per second. Default 25
     re, im : bool
@@ -68,13 +68,14 @@ def animate_wave(
     if im:
         graph3, = ax.plot([x[0], x[-1]], [0, -2*ymax])
 
-    ax2 = ax.twinx()
-    v_max = np.min(v) + 1.1 * (np.max(v) - np.min(v)) + 1 # + 1 if v = const
-    x_ext = np.concatenate(([x[0]], x, [x[-1]]))
-    v_ext = np.concatenate(([v_max], v, [v_max]))
-    ax2.set_ylabel("$V(x)$")
-    ax2.plot(x_ext, v_ext, linewidth=3, color="black", label="V")
-    ax2.legend(loc="upper right")
+    if v is not None:
+        ax2 = ax.twinx()
+        v_max = np.min(v) + 1.1 * (np.max(v) - np.min(v)) + 1 # + 1 if v = const
+        x_ext = np.concatenate(([x[0]], x, [x[-1]]))
+        v_ext = np.concatenate(([v_max], v, [v_max]))
+        ax2.set_ylabel("$V(x)$")
+        ax2.plot(x_ext, v_ext, linewidth=3, color="black", label="V")
+        ax2.legend(loc="upper right")
 
     def frame(i):
         time = i * time_step
