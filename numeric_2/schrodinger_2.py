@@ -2,12 +2,10 @@
 This module is an extension of the solution to the first Numerical Assignment.
 """
 
-import sys
 from typing import Callable
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
-sys.path.append('..')  # To enable imports from previous assignment
 
 
 def time_evolution(
@@ -25,26 +23,37 @@ def time_evolution(
 
     Returns
     -------
-    wave(x, t) : Callable
+    Psi_n(x, t) : Callable
         Time evolved function of position x and time t.
     """
-    # c_values = np.dot(psi, psi[0])
-    return lambda x, t: np.einsum('ij,i->j', psi, np.dot(psi, psi[0]) * np.exp(-1j * energy * t))
-    # return lambda x, t: psi.T @ (c_values * np.exp(-1j * energy * t))
-    # return lambda x, t: np.matmul(psi, np.exp(-1j * energy * t) * np.dot(psi, psi[n]))
+    return lambda x, t: np.einsum('ij,i->j', psi, np.dot(psi, psi[n]) * np.exp(-1j * energy * t))
 
 
 def animate_wave(
         x: np.ndarray,
-        v: np.ndarray,  # potential
+        v: np.ndarray,
         time: float,
         psi: Callable[[np.ndarray, float], np.ndarray],  # x, t -> psi
         fps: int = 25,
         re: bool = False,
-        im: bool = False
+        im: bool = False,
+        savepath: str = 'animation.gif'
     ):
     """
-    TODO
+    Parameters
+    ----------
+    x : np.ndarray
+        Positional array
+    v : np.ndarray
+        Potential in position x
+    time : float
+        Duration of animation in seconds
+    psi : Callable[[np.ndarray, float], np.ndarray]
+        Time evolved Psi(x, t)
+    fps : int
+        Frames per second. Default 25
+    re, im : bool
+        Turn on/off plotting for real and imag. parts of psi. Default false.
     """
     time_step = 1. / fps
     fig, ax = plt.subplots()
@@ -69,7 +78,7 @@ def animate_wave(
 
     def frame(i):
         time = i * time_step
-        wave = psi(x, time)  # TODO
+        wave = psi(x, time)
         graph.set_data(x, np.abs(wave))
         graph.set_label(f"$|\Psi(x, t = {time:.2f})|$")
         if re:
@@ -81,7 +90,7 @@ def animate_wave(
         ax.legend(loc="upper left")
 
     FuncAnimation(fig, frame, frames=int(time*fps), interval=time_step*1000, repeat=False).save(
-        "animation.gif", writer=PillowWriter(fps=fps)
+        savepath, writer=PillowWriter(fps=fps)
     )
 
 
@@ -95,7 +104,8 @@ def main():
         time = 2.,
         psi = lambda x, t: (x/np.max(x)) * np.exp(1j * x * t),
         re = True,
-        im = True
+        im = True,
+        savepath='animations/example.gif'
     )
 
 
