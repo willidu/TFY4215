@@ -9,7 +9,7 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 
 
 def time_evolution(
-        energy: np.ndarray, psi: np.ndarray, n: int = 0
+        energy: np.ndarray, psi: np.ndarray, psi0: np.ndarray
     ) -> Callable[[np.ndarray, int], np.ndarray]:
     """
     Parameters
@@ -18,15 +18,15 @@ def time_evolution(
         Eigenvalues from solving the time independent SE.
     psi : np.ndarray
         Eigenvectors from solving the time independent SE.
-    n : int
-        Quantum number +1 (counting from 0).
+    psi0 : np.ndarray
+        Wave function at t = 0.
 
     Returns
     -------
-    Psi_n(x, t) : Callable
+    Psi(x, t) : Callable
         Time evolved function of position x and time t.
     """
-    return lambda x, t: np.einsum('ij,i->j', psi, np.dot(psi, psi[n]) * np.exp(-1j * energy * t))
+    return lambda x, t: np.einsum('ij,i->j', psi, np.dot(psi, psi0) * np.exp(-1j * energy * t))
 
 
 def animate_wave(
