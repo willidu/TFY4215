@@ -34,10 +34,11 @@ def schrodinger(
     """
     diag = 1. / (dx ** 2) + potential
     semidiag = - 1. / (2. * dx ** 2) * np.ones(len(potential) - 1)
-    eigvals, eigvecs_norm = eigh_tridiagonal(diag, semidiag)
-    eigvecs_norm /= np.sqrt(dx)
-    assert np.allclose(np.linalg.norm(eigvecs_norm.T, axis=0)*np.sqrt(dx), np.ones(len(eigvecs_norm.T))), 'Psi not normalized'
-    return eigvals / scipy.constants.physical_constants['electron volt-hartree relationship'][0], eigvecs_norm.T
+    eigvals, eigvecs = eigh_tridiagonal(diag, semidiag)
+    eigvecs = eigvecs.T
+    eigvecs /= np.sqrt(dx)
+    assert np.allclose(np.einsum('ij,ij->i', eigvecs, eigvecs)*dx, np.ones(len(eigvecs))), 'Psi not normalized'
+    return eigvals / scipy.constants.physical_constants['electron volt-hartree relationship'][0], eigvecs
 
 
 def plot(
