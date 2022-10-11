@@ -45,9 +45,6 @@ def main():
 
     energy, psi = schrodinger(V(x/dx), dx)
 
-    # Check scaling of wave func. and prob. since it does not match the analytical solution
-    assert np.einsum('ij,ij->i', psi, psi) in np.ones(N+1), 'Wrong scaling of wave functions'
-
     plot(
         energy, psi, x, V(x),
         psi_analytical=None, energy_lvls_analytical=analytical_e_levels,
