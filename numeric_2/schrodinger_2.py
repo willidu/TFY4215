@@ -33,12 +33,11 @@ def animate_wave(
         x: np.ndarray,
         time: float,
         psi: Callable[[np.ndarray, float], np.ndarray],  # x, t -> psi
-        v: np.ndarray | None = None,
         fps: int = 25,
         re: bool = False,
         im: bool = False,
         savepath: str = 'animation.gif'
-    ):
+    ) -> None:
     """
     Parameters
     ----------
@@ -48,49 +47,39 @@ def animate_wave(
         Duration of animation in seconds
     psi : Callable[[np.ndarray, float], np.ndarray]
         Time evolved Psi(x, t)
-    v : np.ndarray or None
-        Potential in position x
     fps : int
         Frames per second. Default 25
     re, im : bool
         Turn on/off plotting for real and imag. parts of psi. Default false.
     """
-    time_step = 1. / fps
     fig, ax = plt.subplots()
 
-    ax.set_xlabel("$x$")
-    ax.set_ylabel("$|\Psi|$, $\Re{(\Psi)}$, $\Im{(\Psi)}$")
+    ax.set_xlabel('$x$')
+    ax.set_ylabel('$|\Psi|$, $\Re{(\Psi)}$, $\Im{(\Psi)}$')
 
-    ymax = max(np.max(np.abs(psi(x, 0))**2), np.max(np.abs(psi(x, 0))))
-    graph, = ax.plot([x[0], x[-1]], [0, +2*ymax])
+    ymax = 1.1*np.max(np.abs(psi(x, t=0)))
+    graph, = ax.plot([x[0], x[-1]], [0, 2 * ymax])
     if re:
-        graph2, = ax.plot([x[0], x[-1]], [0, -2*ymax])
+        graph2, = ax.plot([x[0], x[-1]], [0, -2 * ymax])
     if im:
-        graph3, = ax.plot([x[0], x[-1]], [0, -2*ymax])
+        graph3, = ax.plot([x[0], x[-1]], [0, -2 * ymax])
 
-    if v is not None:
-        ax2 = ax.twinx()
-        v_max = np.min(v) + 1.1 * (np.max(v) - np.min(v)) + 1 # + 1 if v = const
-        x_ext = np.concatenate(([x[0]], x, [x[-1]]))
-        v_ext = np.concatenate(([v_max], v, [v_max]))
-        ax2.set_ylabel("$V(x)$")
-        ax2.plot(x_ext, v_ext, linewidth=3, color="black", label="V")
-        ax2.legend(loc="upper right")
+    time_step = 1. / fps
 
     def frame(i):
         time = i * time_step
         wave = psi(x, time)
         graph.set_data(x, np.abs(wave))
-        graph.set_label(f"$|\Psi(x, t = {time:.2f})|$")
+        graph.set_label(f'$|\Psi(x, t = {time:.2f})|$')
         if re:
             graph2.set_data(x, np.real(wave))
-            graph2.set_label(f"$\Re(\Psi(x, t = {time:.2f}))$")
+            graph2.set_label(f'$\Re(\Psi(x, t = {time:.2f}))$')
         if im:
             graph3.set_data(x, np.imag(wave))
-            graph3.set_label(f"$\Im(\Psi(x, t = {time:.2f}))$")
+            graph3.set_label(f'$\Im(\Psi(x, t = {time:.2f}))$')
         ax.legend(loc="upper left")
 
-    FuncAnimation(fig, frame, frames=int(time*fps), interval=time_step*1000, repeat=False).save(
+    FuncAnimation(fig, frame, frames=int(float(time)*fps), interval=time_step*1000, repeat=False).save(
         savepath, writer=PillowWriter(fps=fps)
     )
 
@@ -101,14 +90,12 @@ def main():
     """
     animate_wave(
         x = np.linspace(0, 10, 400),
-        v = np.zeros(400),
         time = 2.,
         psi = lambda x, t: (x/np.max(x)) * np.exp(1j * x * t),
         re = True,
         im = True,
         savepath='animations/example.gif'
     )
-
 
 if __name__ == '__main__':
     main()
