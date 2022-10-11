@@ -1,13 +1,22 @@
 """
-part 1
-TODO
+This module shows the time evolution of a particle in a box with a superposition
+of the ground state and first excited state.
 """
+
 import sys
 import numpy as np
 sys.path.append('..')  # To enable imports from previous assignment
 
 from numeric_1.schrodinger import schrodinger
 from schrodinger_2 import time_evolution, animate_wave
+
+
+def psi0(psi):
+    """
+    Superposition of Psi0(x) and Psi1(x)
+    """
+    return (psi[0] + psi[1]) / np.sqrt(2)
+
 
 def main():
     N = 100
@@ -16,11 +25,8 @@ def main():
     potential = np.zeros_like(x)
     energy, psi = schrodinger(potential, dx)
 
-    time_period = 2 * np.pi / (energy[1] - energy[0])
-    print(f'T = {time_period:.2f}')
-
-    def psi0(psi):
-        return (psi[0] + psi[1]) / np.sqrt(2)
+    time_period = 2 * np.pi / (energy[1] - energy[0])  # [s]
+    print(f'T = {time_period:.2f} s')
 
     animate_wave(
         x = x,
