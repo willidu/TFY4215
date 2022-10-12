@@ -3,13 +3,11 @@ This module is a solution to the traditional 'Particle in a box' problem.
 Uses Hartree atomic units:
     Electron mass = 1;
     Elementary charge = 1;
-    Reduced Plack's constant = 1;
-    Length in terms of Bohr radii.
+    Reduced Plack's constant = 1.
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.constants import physical_constants
 
 from schrodinger import schrodinger, plot
 
@@ -19,28 +17,33 @@ def V(x):
     """
     return np.zeros_like(x)
 
-def Psi(x, n, L):
+
+def Psi(x, n, L=1.):
     """
     Wave function - analytical solution
     """
     return np.sqrt(2./L) * np.sin(n*x*np.pi/L)
 
-def E(n, L):
+
+def E(n, L=1.):
     """
-    Energy level- analytical solution. In eV.
+    Energy level- analytical solution in Hatree.
     """
-    return n ** 2 * np.pi ** 2 / (2. * L ** 2 * physical_constants['electron volt-hartree relationship'][0])
+    return n ** 2 * np.pi ** 2 / (2. * L ** 2)
+
 
 def main():
     N = 100
-    box_length = 4e-9 / physical_constants['Bohr radius'][0]  # 4 nm as bohr radii
-    x = np.linspace(0, box_length, N+1)  # Burde gå [0, 1] heller
+    x, dx = np.linspace(0, 1, N, retstep=True)
+    energy, psi = schrodinger(V(x), dx)
 
-    psi_analytical = np.asarray([Psi(x, n, L=box_length) for n in range(1, 4)])
-    analytical_e_levels = E(np.arange(1, 5), L=box_length)
+    plot(
+        energy, psi, x, V(x),
+        psi_analytical = [Psi(x, n) for n in range(1, 4)],
+        energy_lvls_analytical = E(np.arange(1, 5)),
+        title = 'One dimentional infinite well'
+    )
 
-    energy, psi = schrodinger(V(x), box_length/(N+1))
-    plot(energy, psi, x/box_length, V(x), psi_analytical, analytical_e_levels)
 
 if __name__ == '__main__':
     main()
