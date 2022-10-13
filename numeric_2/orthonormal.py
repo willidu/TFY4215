@@ -1,11 +1,12 @@
 """
 This module is for testing the orthonorma properties of stationary solutions to
-the Schrödinger equation.
+the Schrödinger equation. Normality is checked in the solver from numeric_1,
+so we only need to test the orthogonality of solutions.
 """
 
 import sys
 import numpy as np
-sys.path.append('..') # To enable imports from previous assignment
+sys.path.append('..')
 
 from numeric_1.schrodinger import schrodinger
 
@@ -26,11 +27,6 @@ def main():
             np.transpose(psi) @ psi,
             np.identity(psi.shape[0])/dx
         ), 'Psi not orthogonal'
-
-        assert np.allclose(
-            np.einsum('ij,ij->i', psi,psi)*dx,
-            np.ones_like(x)
-        ), 'Psi not normalized'
 
 if __name__ == '__main__':
     main()
