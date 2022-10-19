@@ -17,6 +17,7 @@ def V(x):
     """
     return np.where(np.logical_and(x > 0, x < 1), 10, 0)
 
+
 def main():
     N = 1000
     x, dx = np.linspace(-10, 10, N, retstep=True)
